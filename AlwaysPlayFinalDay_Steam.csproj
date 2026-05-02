@@ -4,7 +4,7 @@
         <AssemblyName>alexandria-p.AlwaysPlayFinalDay</AssemblyName>
         <Product>AlwaysPlayFinalDay</Product>
         <!-- Change to whatever version you're currently on. -->
-        <Version>1.0.1</Version>
+        <Version>2.0.0</Version>
     </PropertyGroup>
 
     <!-- Project Properties -->
@@ -39,9 +39,13 @@
         <PathMap>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))=./</PathMap>
     </PropertyGroup>
 
-	<ItemGroup>
+
+	<!-- This glob was causing BepInEx to be baked in as a hard versioned dependency,          -->
+	<!-- making ContentLoader fail with ReflectionTypeLoadException at runtime.                -->
+	<!-- BepInEx.Core NuGet (with PrivateAssets="all") is the correct way to reference it.    -->
+	<!--ItemGroup>
 		<Reference Include="$(GameDirectory)\BepInEx\core\*.dll" Private="false"/>
-	</ItemGroup>
+	</ItemGroup -->
 
 	<!-- Primary Package References -->
 	<!-- These are handled by the NuGet Package Manager for this solution -->
@@ -67,13 +71,6 @@
     </ItemGroup>
     <ItemGroup Condition="$(CI) == 'true'">
         <PackageReference Include="ContentWarning.GameLibs.Steam" Version="*-*" Publicize="true" PrivateAssets="all" />
-    </ItemGroup>
-
-	<!-- Manually reference Hamunii's file included with this project, for "On." hook definitions -->
-	<ItemGroup>
-		<Reference Include="MMHook">
-			<HintPath>.\Dependencies\MMHOOK_Assembly-CSharp.dll</HintPath>
-		</Reference>
     </ItemGroup>
 
 	<!-- Import libraries from CW game files -->

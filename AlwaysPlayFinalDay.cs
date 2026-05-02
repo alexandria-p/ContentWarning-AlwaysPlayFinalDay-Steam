@@ -1,6 +1,5 @@
-using BepInEx;
+using HarmonyLib;
 using System.Reflection;
-using MonoMod.RuntimeDetour.HookGen;
 using AlwaysPlayFinalDay.Patches;
 using MyceliumNetworking;
 using Zorro.Settings;
@@ -11,8 +10,7 @@ namespace AlwaysPlayFinalDay;
 // since this alters the gameplay experience by playing through the final day,
 // I have set it to "not vanilla"
 [ContentWarningPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_VERSION, false)]
-[BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
-public class AlwaysPlayFinalDaySteam : BaseUnityPlugin
+public class AlwaysPlayFinalDaySteam
 {
     // this static constructor is used to init the Steam version of this mod.
     static AlwaysPlayFinalDaySteam()
@@ -34,7 +32,7 @@ public class AlwaysPlayFinalDaySteam : BaseUnityPlugin
         gameObject.AddComponent<AlwaysPlayFinalDay>();
 
         // Jan 2025 - make sure CW update doesnt destroy this mod
-        DontDestroyOnLoad(gameObject);
+        UnityEngine.Object.DontDestroyOnLoad(gameObject);
     }
 }
 
@@ -45,6 +43,8 @@ public class AlwaysPlayFinalDay : MonoBehaviour // prev. BaseUnityPlugin
     const uint myceliumNetworkModId = 61813; // meaningless, as long as it is the same between all the clients
     public static AlwaysPlayFinalDay Instance { get; private set; } = null!;
 
+    private Harmony? _harmony;
+
     public bool PlayFinalDayEvenIfQuotaNotMet { get; private set; }
 
     public bool Debug_InitSurfaceActive; // helper boolean
@@ -53,7 +53,8 @@ public class AlwaysPlayFinalDay : MonoBehaviour // prev. BaseUnityPlugin
     private void Awake()
     {
         Instance = this;
-        HookAll();
+        _harmony = new Harmony(MyPluginInfo.PLUGIN_GUID);
+        _harmony.PatchAll(Assembly.GetExecutingAssembly());
     }
 
     private void Start()
@@ -63,18 +64,8 @@ public class AlwaysPlayFinalDay : MonoBehaviour // prev. BaseUnityPlugin
 
     void OnDestroy()
     {
+        _harmony?.UnpatchSelf();
         MyceliumNetwork.DeregisterNetworkObject(Instance, myceliumNetworkModId);
-    }
-
-    internal static void HookAll()
-    {
-        SurfaceNetworkHandlerPatch.Init();
-        PhotonGameLobbyHandlerPatch.Init();
-    }
-
-    internal static void UnhookAll()
-    {
-        HookEndpointManager.RemoveAllOwnedBy(Assembly.GetExecutingAssembly());
     }
 
     public bool IsFinalDayAndQuotaNotMet()

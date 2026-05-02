@@ -13,6 +13,10 @@ When you go to sleep at the end of the final day, the regular Game Over sequence
 
 ### Changelog
 
+**v2.0.0**
+-Fix mod so it is compatible with 2026 CW update
+-Convert mod to Harmony, remove MM_HOOK dependency
+
 **v1.0.1**
 - fix dependency
 

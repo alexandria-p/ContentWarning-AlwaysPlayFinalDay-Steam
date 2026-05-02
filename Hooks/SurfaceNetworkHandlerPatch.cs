@@ -25,7 +25,7 @@ public class SurfaceNetworkHandlerPatch
             && AlwaysPlayFinalDay.Instance.PlayFinalDayEvenIfQuotaNotMet
             && AlwaysPlayFinalDay.Instance.IsFinalDayAndQuotaNotMet())
         {
-            Debug.Log($"{MyPluginInfo.PLUGIN_NAME} v{MyPluginInfo.PLUGIN_VERSION}: Spawn players, even on final day.");
+            Debug.Log($"[{MyPluginInfo.PLUGIN_NAME} v{MyPluginInfo.PLUGIN_VERSION}] Spawn players, even on final day.");
             if (!Player.justDied)
             {
                 SpawnHandler.Instance.SpawnLocalPlayer(Spawns.DiveBell);
@@ -53,7 +53,7 @@ public class SurfaceNetworkHandlerPatch
             && AlwaysPlayFinalDay.Instance.Debug_InitSurfaceActive)
         {
             // early out - we do not want to skip to 'quota failed' in InitSurface before players get to watch their video.
-            Debug.Log($"{MyPluginInfo.PLUGIN_NAME} v{MyPluginInfo.PLUGIN_VERSION}: Cancelled gameover, to allow players to watch their video on the final day when they didn't meet quota");
+            Debug.Log($"[{MyPluginInfo.PLUGIN_NAME} v{MyPluginInfo.PLUGIN_VERSION}] Cancelled gameover, to allow players to watch their video on the final day when they didn't meet quota");
             return false; // skip original
         }
 

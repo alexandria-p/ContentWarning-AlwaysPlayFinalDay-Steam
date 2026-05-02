@@ -1,5 +1,3 @@
-using HarmonyLib;
-using System.Reflection;
 using AlwaysPlayFinalDay.Patches;
 using MyceliumNetworking;
 using Zorro.Settings;
@@ -43,8 +41,6 @@ public class AlwaysPlayFinalDay : MonoBehaviour // prev. BaseUnityPlugin
     const uint myceliumNetworkModId = 61813; // meaningless, as long as it is the same between all the clients
     public static AlwaysPlayFinalDay Instance { get; private set; } = null!;
 
-    private Harmony? _harmony;
-
     public bool PlayFinalDayEvenIfQuotaNotMet { get; private set; }
 
     public bool Debug_InitSurfaceActive; // helper boolean
@@ -53,8 +49,6 @@ public class AlwaysPlayFinalDay : MonoBehaviour // prev. BaseUnityPlugin
     private void Awake()
     {
         Instance = this;
-        _harmony = new Harmony(MyPluginInfo.PLUGIN_GUID);
-        _harmony.PatchAll(Assembly.GetExecutingAssembly());
     }
 
     private void Start()
@@ -64,7 +58,6 @@ public class AlwaysPlayFinalDay : MonoBehaviour // prev. BaseUnityPlugin
 
     void OnDestroy()
     {
-        _harmony?.UnpatchSelf();
         MyceliumNetwork.DeregisterNetworkObject(Instance, myceliumNetworkModId);
     }
 
@@ -88,7 +81,7 @@ public class AlwaysPlayFinalDay : MonoBehaviour // prev. BaseUnityPlugin
             AlwaysPlayFinalDay.Instance.SetPlayFinalDayEvenIfQuotaNotMet(Value);
         }
        
-        public string GetDisplayName() => "AlwaysPlayFinalDay: Allow crew to view their camera footage on final day, even if the footage won't reach quota (uses the host's game settings) \nWithout this setting, the third day ends immediately.";
+        public string GetDisplayName() => "[AlwaysPlayFinalDay] Allow crew to view their camera footage on final day, even if the footage won't reach quota (uses the host's game settings) \nWithout this setting, the third day ends immediately.";
 
         protected override bool GetDefaultValue() => true;
     }

@@ -1,6 +1,3 @@
-using BepInEx;
-using System.Reflection;
-using MonoMod.RuntimeDetour.HookGen;
 using AlwaysPlayFinalDay.Patches;
 using MyceliumNetworking;
 using Zorro.Settings;
@@ -11,8 +8,7 @@ namespace AlwaysPlayFinalDay;
 // since this alters the gameplay experience by playing through the final day,
 // I have set it to "not vanilla"
 [ContentWarningPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_VERSION, false)]
-[BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
-public class AlwaysPlayFinalDaySteam : BaseUnityPlugin
+public class AlwaysPlayFinalDaySteam
 {
     // this static constructor is used to init the Steam version of this mod.
     static AlwaysPlayFinalDaySteam()
@@ -34,7 +30,7 @@ public class AlwaysPlayFinalDaySteam : BaseUnityPlugin
         gameObject.AddComponent<AlwaysPlayFinalDay>();
 
         // Jan 2025 - make sure CW update doesnt destroy this mod
-        DontDestroyOnLoad(gameObject);
+        UnityEngine.Object.DontDestroyOnLoad(gameObject);
     }
 }
 
@@ -53,7 +49,6 @@ public class AlwaysPlayFinalDay : MonoBehaviour // prev. BaseUnityPlugin
     private void Awake()
     {
         Instance = this;
-        HookAll();
     }
 
     private void Start()
@@ -64,17 +59,6 @@ public class AlwaysPlayFinalDay : MonoBehaviour // prev. BaseUnityPlugin
     void OnDestroy()
     {
         MyceliumNetwork.DeregisterNetworkObject(Instance, myceliumNetworkModId);
-    }
-
-    internal static void HookAll()
-    {
-        SurfaceNetworkHandlerPatch.Init();
-        PhotonGameLobbyHandlerPatch.Init();
-    }
-
-    internal static void UnhookAll()
-    {
-        HookEndpointManager.RemoveAllOwnedBy(Assembly.GetExecutingAssembly());
     }
 
     public bool IsFinalDayAndQuotaNotMet()
@@ -97,7 +81,7 @@ public class AlwaysPlayFinalDay : MonoBehaviour // prev. BaseUnityPlugin
             AlwaysPlayFinalDay.Instance.SetPlayFinalDayEvenIfQuotaNotMet(Value);
         }
        
-        public string GetDisplayName() => "AlwaysPlayFinalDay: Allow crew to view their camera footage on final day, even if the footage won't reach quota (uses the host's game settings) \nWithout this setting, the third day ends immediately.";
+        public string GetDisplayName() => "[AlwaysPlayFinalDay] Allow crew to view their camera footage on final day, even if the footage won't reach quota (uses the host's game settings) \nWithout this setting, the third day ends immediately.";
 
         protected override bool GetDefaultValue() => true;
     }
